@@ -10,11 +10,25 @@ apiEndpoints:
   seismicData:
     host: 'localhost'
     paths: '/seismic/*'
+  daylightData:
+    host: 'localhost'
+    paths: '/daylight/*'
+  astrosData:
+    host: 'localhost'
+    paths: '/astros/'
+  iss-nowData:
+    host: 'localhost'
+    paths: '/iss-now/'
+    
 serviceEndpoints:
   httpbin:
     url: 'https://httpbin.org'
   seismic:
     url: 'https://65ca483b3b05d29307e01640.mockapi.io/api'
+  daylight:
+    url: 'https://65ca483b3b05d29307e01640.mockapi.io/api'
+  iss:
+    url: 'http://api.open-notify.org/'
 policies:
   - basic-auth
   - cors
@@ -46,4 +60,31 @@ pipelines:
         - action:
             serviceEndpoint: seismic
             changeOrigin: true
+  daylight:
+    apiEndpoints:
+      - daylightData
+    policies:
+      - log:
+        - action:
+            message: '${req.method} ${req.originalUrl}'
+      - proxy:
+        - action:
+            serviceEndpoint: daylight
+            changeOrigin: true
+  iss-now:
+    apiEndpoints:
+      - iss-nowData
+      - astrosData
+    policies:
+      - log:
+        - action:
+            message: '${req.method} ${req.originalUrl}'
+      - proxy:
+        - action:
+            serviceEndpoint: iss
+            changeOrigin: true
+   
+  
+   
+   
 
